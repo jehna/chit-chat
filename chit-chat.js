@@ -5,12 +5,12 @@ if (Meteor.isClient) {
     var userID = Users.insert({
         _id: Meteor.connection._lastSessionId,
         position: {
-            x: 230,
-            y: 264
+            x: window.innerWidth * Math.random(),
+            y: window.innerHeight * Math.random()
         },
         color: Math.floor(Math.random()*0x666666) + 0x333333
     });
-    user = Users.findOne({ _id: userID })
+    user = Users.findOne({ _id: userID });
     
     
     PIXI.SCALE_MODES.DEFAULT = PIXI.SCALE_MODES.NEAREST;
@@ -47,14 +47,17 @@ if (Meteor.isClient) {
         }
     }
     
-    window.document.addEventListener('mousedown', onDown);
-    window.document.addEventListener('touchstart', onDown);
-
-    function onDown (e) {
+    window.document.addEventListener('mousedown', function(e) {
         user.position.x = e.clientX;
         user.position.y = e.clientY;
         Users.update({ _id: userID }, user);
-    }
+    });
+    window.document.addEventListener('touchstart', function(e) {
+        user.position.x = e.targetTouches[0].clientX;
+        user.position.y = e.targetTouches[0].clientY;
+        Users.update({ _id: userID }, user);
+    });
+    
     // start animating
     animate();
     
