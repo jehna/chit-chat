@@ -91,12 +91,14 @@ if (Meteor.isClient) {
             e.stopPropagation();
             recordBtn.tint = 0x999999;
             recorder && recorder.record();
-            setTimeout(stopRecord, 3000);
+            recordTimeout = setTimeout(stopRecord, 3000);
         }
         
         stopRecord = recordBtn.mouseup = recordBtn.touchend = function(e) {
             e && e.stopPropagation();
+            if (recordTimeout == -1) return;
             clearTimeout(recordTimeout);
+            recordTimeout = -1;
             recorder.stop();
             recordBtn.tint = 0xFFFFFF;
             recorder.exportWAV(function(blob) {
